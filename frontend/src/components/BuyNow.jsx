@@ -37,7 +37,6 @@ const BuyNow = () => {
   };
 
   // ✅ Send order to backend
-// ✅ Send order to backend
   const handleConfirm = async (e) => {
     e.preventDefault();
 
@@ -54,14 +53,10 @@ const BuyNow = () => {
       productTitle: product.name,
     };
 
-    // --- CHANGE 1: Get the API URL from environment variables ---
-    const API_URL = import.meta.env.VITE_API_URL;
-
     console.log("Order Data:", orderData);
 
     try {
-      // --- CHANGE 2: Use the API_URL variable in the fetch call ---
-      const response = await fetch(`${API_URL}/api/order`, {
+      const response = await fetch("http://localhost:5000/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),

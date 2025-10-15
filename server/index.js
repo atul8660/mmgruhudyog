@@ -1,8 +1,8 @@
 const express = require("express");
+const nodemailer = require("nodemailer");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { Resend } = require('resend'); // Import Resend
-
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,7 +13,10 @@ app.use(express.json());
 
 // ================= MONGODB CONNECTION =================
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ MongoDB Connected (Atlas)"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
@@ -29,62 +32,67 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema);
 
-// ================= ORDER ROUTE (WITH EMAIL NOTIFICATION) =================
+// ================= ORDER ROUTE =================
 app.post("/api/order", async (req, res) => {
   try {
-    // --- ADDED DEBUGGING LINE ---
-    console.log("CHECKING KEY -> RESEND API KEY IS:", process.env.RESEND_API_KEY);
-    // --- END OF DEBUGGING LINE ---
-
     console.log("Order Data Received:", req.body);
+
     const { name, address, quantity, payment, productTitle } = req.body;
+
+    // Validate all fields
     if (!name || !address || !quantity || !payment || !productTitle) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
     const qty = Number(quantity);
     if (isNaN(qty) || qty <= 0) {
       return res.status(400).json({ error: "Quantity must be a positive number" });
     }
-    const newOrder = new Order({ name, address, quantity: qty, payment, productTitle });
+
+    const newOrder = new Order({
+      name,
+      address,
+      quantity: qty,
+      payment,
+      productTitle,
+    });
+
     const savedOrder = await newOrder.save();
     console.log("Order Saved:", savedOrder);
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: 'mmgruhudyog1@gmail.com',
-        subject: `New Order Received: ${productTitle}`,
-        html: `<h1>You have a new order!</h1><p><strong>Product:</strong> ${productTitle}</p><p><strong>Quantity:</strong> ${quantity} kg</p><p><strong>Customer Name:</strong> ${name}</p><p><strong>Delivery Address:</strong> ${address}</p><p><strong>Payment Method:</strong> ${payment}</p>`
-    });
-
     res.status(200).json({ message: "✅ Order saved successfully!", order: savedOrder });
   } catch (err) {
-    console.error("Order Route Error:", err);
-    res.status(500).json({ error: "❌ Failed to process order" });
+    console.error("MongoDB Save Error:", err);
+    res.status(500).json({ error: "❌ Failed to save order" });
   }
 });
 
-// ================= CONTACT ROUTE (Updated for Resend) =================
+// ================= CONTACT ROUTE =================
 app.post("/api/contact", async (req, res) => {
-  // --- ADDED DEBUGGING LINE ---
-  console.log("CHECKING KEY -> RESEND API KEY IS:", process.env.RESEND_API_KEY);
-  // --- END OF DEBUGGING LINE ---
-
   const { fullname, email, message } = req.body;
-  const resend = new Resend(process.env.RESEND_API_KEY);
 
   if (!fullname || !email || !message) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: "mmgruhudyog1@gmail.com",
+    subject: `Contact Form Message from ${fullname}`,
+    text: `Name: ${fullname}\nEmail: ${email}\nMessage: ${message}`,
+    replyTo: email,
+  };
+
   try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'mmgruhudyog1@gmail.com',
-      subject: `Contact Form Message from ${fullname}`,
-      html: `<p>Name: ${fullname}</p><p>Email: ${email}</p><p>Message: ${message}</p>`,
-      reply_to: email,
-    });
+    await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Message sent successfully ✅" });
   } catch (err) {
     console.error(err);
@@ -92,8 +100,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-
 // ================= START SERVER =================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-}); //updated code
+});

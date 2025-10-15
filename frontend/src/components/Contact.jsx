@@ -21,13 +21,8 @@ const Contact = () => {
     }
 
     setLoading(true);
-    
-    // Get the API URL from environment variables
-    const API_URL = import.meta.env.VITE_API_URL;
-
     try {
-      // Use the API_URL variable in the fetch call
-      const res = await fetch(`${API_URL}/api/contact`, {
+      const res = await fetch("http://localhost:5000/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullname, email, message }),
@@ -122,7 +117,7 @@ const Contact = () => {
       </section>
 
       <footer>
-        <p>© 2025 Mahadwar Mahila Gruhudyog. All rights reserved.</p>
+        <p>&copy; 2025 Mahadwar Mahila Gruhudyog. All rights reserved.</p>
       </footer>
     </div>
   );
