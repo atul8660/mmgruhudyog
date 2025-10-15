@@ -75,13 +75,17 @@ app.post("/api/contact", async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // --- THIS IS THE UPDATED/FIXED PART ---
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true, // Use true for port 465
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER, // Your Gmail address
+      pass: process.env.EMAIL_PASS, // Your 16-character Google App Password
     },
   });
+  // --- END OF THE FIX ---
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
