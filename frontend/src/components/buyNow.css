@@ -1,0 +1,119 @@
+/* ================= CONTAINER ================= */
+.buy-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff6f0;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ================= PRODUCT DETAILS ================= */
+.buy-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f0dcd0;
+  padding-bottom: 15px;
+}
+
+.buy-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid #f0c9b5;
+}
+
+.buy-details h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.buy-details .price {
+  font-size: 1rem;
+  color: #e3685a;
+  margin-top: 5px;
+}
+
+/* ================= FORM STYLING ================= */
+.buy-form label {
+  display: block;
+  font-weight: 600;
+  margin-top: 12px;
+  color: #333;
+}
+
+.buy-form input,
+.buy-form textarea,
+.buy-form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.buy-form input:focus,
+.buy-form textarea:focus,
+.buy-form select:focus {
+  border-color: #e3685a;
+  box-shadow: 0 0 5px rgba(227, 104, 90, 0.3);
+}
+
+/* ================= BUTTONS ================= */
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  gap: 10px;
+}
+
+.confirm-btn,
+.cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #c82333;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 480px) {
+  .buy-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .buy-img {
+    width: 80px;
+    height: 80px;
+  }
+}
