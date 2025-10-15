@@ -21,8 +21,13 @@ const Contact = () => {
     }
 
     setLoading(true);
+    
+    // Get the API URL from environment variables
+    const API_URL = process.env.REACT_APP_API_URL;
+
     try {
-      const res = await fetch("http://localhost:5000/api/contact", {
+      // Use the API_URL variable in the fetch call
+      const res = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullname, email, message }),
@@ -117,7 +122,7 @@ const Contact = () => {
       </section>
 
       <footer>
-        <p>&copy; 2025 Mahadwar Mahila Gruhudyog. All rights reserved.</p>
+        <p>© 2025 Mahadwar Mahila Gruhudyog. All rights reserved.</p>
       </footer>
     </div>
   );
