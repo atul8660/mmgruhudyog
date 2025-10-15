@@ -11,12 +11,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// ================= MONGODB CONNECTION =================
+// ================= MONGODB CONNECTION (FIXED) =================
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI) // <-- The outdated options have been removed
   .then(() => console.log("✅ MongoDB Connected (Atlas)"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
@@ -75,7 +72,6 @@ app.post("/api/contact", async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // --- THIS IS THE UPDATED/FIXED PART ---
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -85,7 +81,6 @@ app.post("/api/contact", async (req, res) => {
       pass: process.env.EMAIL_PASS, // Your 16-character Google App Password
     },
   });
-  // --- END OF THE FIX ---
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
